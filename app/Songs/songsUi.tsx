@@ -3,6 +3,7 @@ import {
   Icon,
   ProgressBar,
 } from "@react-native-blossom-ui/components";
+import { BlurView } from "expo-blur";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -42,11 +43,21 @@ export default function SongUi({ song, notFound, onBack }: any) {
     >
       <ImageBackground
         source={
-          typeof song.image2 === "string" ? { uri: song.image2 } : song.image2
+          typeof song.image === "string" ? { uri: song.image } : song.image
         }
         style={styles.songImage2}
         resizeMode="cover"
-      />
+      >
+        {/* Blur only the image */}
+        <BlurView
+          intensity={20}
+          style={styles.blurOverlay}
+          pointerEvents="none"
+        />
+
+        {/* Black overlay on top of the blurred image */}
+        <View style={styles.blackOverlay} pointerEvents="none" />
+      </ImageBackground>
       <View style={[styles.container, {}]}>
         <View
           style={[
@@ -116,10 +127,11 @@ export default function SongUi({ song, notFound, onBack }: any) {
                 }}
               >
                 <Icon
-                  name={pause ? "play" : "pause"}
-                  size={35}
+                  family="Ionicons"
+                  name={pause ? "pause" : "play"}
+                  size={32}
                   onPress={() => setpause((prev) => !prev)}
-                  color={pause ? "black" : "black"}
+                  color="black"
                 />
               </View>
               <Icon color={"#fff"} name="play-skip-forward" />
@@ -201,9 +213,10 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   songImage2: {
+    backgroundColor: "black",
     position: "absolute",
     width: "100%",
-    height: "103%",
+    height: "105%",
 
     justifyContent: "center",
     alignItems: "center",
@@ -247,5 +260,17 @@ const styles = StyleSheet.create({
   progressBarTime: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  blurOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    // opacity: 0.01,
+    // backgroundColor: "rgba(0,0,0,0.6)", // adjust opacity as needed
+  },
+  blackOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.18)",
   },
 });
